@@ -28,11 +28,4 @@ def definedIntegral(infLimit, supLimit, precision, expoent):
         infLimit = infLimit + precision
         i = i + 1
     return sum(array)
-    
-print("This software will calculate the Integral of a power function.")
-infLimit = float(raw_input("Write the lower limit:"))
-supLimit = float(raw_input("Write the upper limit:"))
-precision= float(raw_input("Write precision:"))
-expoent = int(raw_input("Write a power:"))
 
-print(definedIntegral(infLimit, supLimit, precision, expoent))
