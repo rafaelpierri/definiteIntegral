@@ -10,22 +10,22 @@ def power(expoent, base):
     return result
 
 def sum(array):
-    i = 1
+    i = 0
     result = 0
     while(i < array.__len__()):
         result = result + array[i]
         i = i + 1
     return result
 
-def definedIntegral(infLimit, supLimit, precision, expoent):
+def definedIntegral(infLimit, supLimit, precision, expoent, connection):
     i = 0
     array = []
     tmp = 0
     while(infLimit < supLimit):
         tmp = ((power(expoent, infLimit) + power(expoent, infLimit+precision))/2)*precision
         array.append(tmp)
-        #array.insert(i, tmp) 
         infLimit = infLimit + precision
         i = i + 1
-    return sum(array)
+    connection.send(sum(array))
+    connection.close()
 
