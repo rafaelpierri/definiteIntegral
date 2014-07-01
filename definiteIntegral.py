@@ -1,15 +1,11 @@
 from multiprocessing import Pool
 
 def defined_integral(exponent, lower=0.0, upper=1.0, precision=0.001):
-    i = 0
-    array = []
-    tmp = 0
+    area = 0
     while(lower < upper):
-        tmp = ((lower ** exponent + (lower + precision) ** exponent)) * precision / 2
-        array.append(tmp)
+        area += ((lower ** exponent + (lower + precision) ** exponent)) * precision / 2
         lower = lower + precision
-        i = i + 1
-    return sum(array)
+    return area
 
 def _defined_integral_task(args):
     'Expands arguments received from Pool to our API.'
