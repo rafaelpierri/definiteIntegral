@@ -1,22 +1,11 @@
 from multiprocessing import Pool
 
-def power(expoent, base):
-    i = 0
-    result = 0
-    while (i < expoent):
-            if(result==0):
-                result = base
-            else:
-                result = result * base
-            i = i + 1
-    return result
-
-def defined_integral(exponent, lower=0, upper=1, precision=0.001):
+def defined_integral(exponent, lower=0.0, upper=1.0, precision=0.001):
     i = 0
     array = []
     tmp = 0
     while(lower < upper):
-        tmp = ((power(exponent, lower) + power(exponent, lower+precision))/2)*precision
+        tmp = ((lower ** exponent + (lower + precision) ** exponent)) * precision / 2
         array.append(tmp)
         lower = lower + precision
         i = i + 1
@@ -26,7 +15,7 @@ def _defined_integral_task(args):
     'Expands arguments received from Pool to our API.'
     return defined_integral(*args)
 
-def mp_defined_integral(exponent, lower=0, upper=1, precision=0.001, workers=1):
+def mp_defined_integral(exponent, lower=0.0, upper=1.0, precision=0.001, workers=1):
     'Numerically calculates a defined integral using several processes.'
 
     if workers == 1:
