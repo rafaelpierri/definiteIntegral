@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
-from multiprocessing import Process, Pipe
 
-from definiteIntegral import definedIntegral
+from definiteIntegral import mp_defined_integral
 
 if __name__ == '__main__':
     argparser = ArgumentParser(description=
@@ -18,26 +17,6 @@ if __name__ == '__main__':
             help='Power function\'s exponent.')
     args = argparser.parse_args()
 
-
-    workers = []
-
-    i = 0
-    while(i < args.fork):
-        parent_conn, child_conn = Pipe()
-        p = Process(target=definedIntegral,
-                    args=(args.lower+((args.upper-args.lower)/args.fork)*i,
-                    args.lower+((args.upper-args.lower)/args.fork)*(i+1),
-                    args.precision, args.exponent, child_conn,))
-        p.start()
-        workers.append({'parent': parent_conn, 'child': child_conn, 'process': p})
-        i = i + 1
-
-    i = 0
-    array = []
-    while(i < args.fork):
-        array.append(workers[i]['parent'].recv())
-        workers[i]['process'].join()
-        i = i + 1
-
-    print(sum(array))
+    print mp_defined_integral(args.exponent, 
+            args.lower, args.upper, args.precision, args.fork)
 
