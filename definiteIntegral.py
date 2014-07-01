@@ -1,4 +1,4 @@
-from multiprocessing import Process, Pipe
+from multiprocessing import Pool
 
 def power(expoent, base):
     i = 0
@@ -19,7 +19,7 @@ def sum(array):
         i = i + 1
     return result
 
-def definedIntegral(infLimit, supLimit, precision, expoent, connection):
+def definedIntegral(infLimit, supLimit, precision, expoent):
     i = 0
     array = []
     tmp = 0
@@ -28,31 +28,24 @@ def definedIntegral(infLimit, supLimit, precision, expoent, connection):
         array.append(tmp)
         infLimit = infLimit + precision
         i = i + 1
-    connection.send(sum(array))
-    connection.close()
-    
-print("This software will calculate the Integral of a power function.")
-infLimit = float(raw_input("Write the lower limit:"))
-supLimit = float(raw_input("Write the upper limit:"))
-precision= float(raw_input("Write precision:"))
-expoent = int(raw_input("Write a power:"))
-workersNumber = int(raw_input("Write quantity of worker processes:"))
+    return sum(array)
 
-workers = []
+def _defined_integral_task(args):
+    'Expands arguments received from Pool to our API.'
+    return definedIntegral(*args)
 
-i = 0
-while(i < workersNumber):
-    parent_conn, child_conn = Pipe()	
-    p = Process(target=definedIntegral, args=(infLimit+((supLimit-infLimit)/workersNumber)*i, infLimit+((supLimit-infLimit)/workersNumber)*(i+1), precision, expoent, child_conn,))
-    p.start()   
-    workers.append({'parent': parent_conn, 'child': child_conn, 'process': p})
-    i = i + 1	
+def mp_defined_integral(exponent, lower=0, upper=1, precision=0.001, workers=1):
+    'Numerically calculates a defined integral using several processes.'
+    if workers == 1:
+        return definedIntegral(lower, upper, precision, exponent)
 
-i = 0
-array = []
-while(i < workersNumber):
-    array.append(workers[i]['parent'].recv())
-    workers[i]['process'].join()
-    i = i + 1
+    # split by equal width x-range
+    width = float(upper - lower) / workers
+    tasks = tuple(lower + i * width for i in range(workers)) + (upper,)
+    tasks = tuple((a, b, precision, exponent) 
+                  for (a, b) in zip(tasks[:-1], tasks[1:]))
 
-print(sum(array))
+    # run all tasks and aggregate results
+    pool = Pool(processes=workers)
+    return sum(pool.map(_defined_integral_task, tasks))
+
