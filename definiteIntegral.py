@@ -11,38 +11,31 @@ def power(expoent, base):
             i = i + 1
     return result
 
-def sum(array):
-    i = 0
-    result = 0
-    while(i < array.__len__()):
-        result = result + array[i]
-        i = i + 1
-    return result
-
-def definedIntegral(infLimit, supLimit, precision, expoent):
+def defined_integral(exponent, lower=0, upper=1, precision=0.001):
     i = 0
     array = []
     tmp = 0
-    while(infLimit < supLimit):
-        tmp = ((power(expoent, infLimit) + power(expoent, infLimit+precision))/2)*precision
+    while(lower < upper):
+        tmp = ((power(exponent, lower) + power(exponent, lower+precision))/2)*precision
         array.append(tmp)
-        infLimit = infLimit + precision
+        lower = lower + precision
         i = i + 1
     return sum(array)
 
 def _defined_integral_task(args):
     'Expands arguments received from Pool to our API.'
-    return definedIntegral(*args)
+    return defined_integral(*args)
 
 def mp_defined_integral(exponent, lower=0, upper=1, precision=0.001, workers=1):
     'Numerically calculates a defined integral using several processes.'
+
     if workers == 1:
-        return definedIntegral(lower, upper, precision, exponent)
+        return defined_integral(exponent, lower, upper, precision)
 
     # split by equal width x-range
     width = float(upper - lower) / workers
     tasks = tuple(lower + i * width for i in range(workers)) + (upper,)
-    tasks = tuple((a, b, precision, exponent) 
+    tasks = tuple((exponent, a, b, precision) 
                   for (a, b) in zip(tasks[:-1], tasks[1:]))
 
     # run all tasks and aggregate results
