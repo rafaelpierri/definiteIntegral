@@ -40,8 +40,12 @@ def number_token(i, c, pos):
             c, p = next(i)
 
         if c == '.':
-            token += '.'
-            c, p = next(i)
+            try:
+                token += '.'
+                c, p = next(i)
+            except StopIteration:
+                raise LexerException(pos, 'Invalid number')
+                
             if not '0' <= c <= '9':
                 raise LexerException(pos, 'Invalid number')
 
