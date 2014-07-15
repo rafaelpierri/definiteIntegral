@@ -5,7 +5,23 @@ class LexerException(Exception):
         self.pos = pos
 
     def __str__(self):
-        return '{} @{}'.format(self.message, self.pos)
+        return '{} (position {})'.format(self.message, self.pos)
+
+
+class Lexer(object):
+
+    def __init__(self, src):
+        self.src = src
+
+    def __enter__(self):
+        self.tokens = tokens(self.src)
+        return self
+
+    def __exit__(self, etype, evalue, trace):
+        self.tokens.close()
+
+    def next(self):
+        return next(self.tokens)
 
 
 def tokens(src):
@@ -15,10 +31,15 @@ def tokens(src):
         p0 = p
         if c is None:
             # end of input
-            raise StopIteration
+            yield (None, '', len(src))
+            return
         elif c in (' ', '\t'):
             # discard whitespace
-            c, p = next(i)
+            try:
+                c, p = next(i)
+            except StopIteration:
+                yield (None, '', len(src))
+                return
         elif '0' <= c <= '9':
             t, c, p = number_token(i, c, p)
             yield ('number', t, p0)
@@ -80,5 +101,4 @@ def symbol_token(i, c, p):
         return (token, c, p)
     except StopIteration:
         return (token, None, None)
-
 
