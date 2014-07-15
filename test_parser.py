@@ -53,6 +53,42 @@ class TestParser(unittest.TestCase):
         self.assertSequenceEqual([1, 2, 3, 'add', 'add'], parse('1+(2+3)'))
         self.assertSequenceEqual([1, 2, 'add', 3, 'mul', 4, 'pow', 'neg'], parse('-(((1+2)*3)^4)'))
 
+    def test_errors_basic(self):
+        with self.assertRaises(ParserException):
+            parse('')
+
+        with self.assertRaises(ParserException):
+            parse('2x')
+
+        with self.assertRaises(ParserException):
+            parse('1 2')
+
+        with self.assertRaises(ParserException):
+            parse('x y')
+
+    def test_errors_arithmetic(self):
+        with self.assertRaises(ParserException):
+            parse('2+')
+
+        with self.assertRaises(ParserException):
+            parse('2-')
+
+        with self.assertRaises(ParserException):
+            parse('2*')
+
+        with self.assertRaises(ParserException):
+            parse('2/')
+
+        with self.assertRaises(ParserException):
+            parse('2^')
+
+    def test_errors_parenthesis(self):
+        with self.assertRaises(ParserException):
+            parse('(1+2')
+
+        with self.assertRaises(ParserException):
+            parse('1+2)')
+
 
 if __name__ == '__main__':
     unittest.main()
