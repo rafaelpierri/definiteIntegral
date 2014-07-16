@@ -1,34 +1,21 @@
 Definite Integral
 =================
 
-This tool will numerically estimate the definite integral of a power function, like:
+This tool numerically estimates the definite integral of a function. The integral must have at most one variable, and is bound between two (numerically) real values. Its value will be estimated by the [trapezoidal rule][trapezoidal-rule], using almost regular spacing given by _p_.
 
-<math xmlns="http://www.w3.org/1998/Math/MathML">
-    <msubsup>
-        <mo>&int;</mo>
-        <mi>a</mi>
-        <mi>b</mi>
-    </msubsup>
-    <msup>
-        <mi>x</mi>
-        <mi>y</mi>
-    </msup>
-    <mo>d<mi>x</mi></mo>
-</math>
+[trapezoidal-rule]: http://en.wikipedia.org/wiki/Trapezoidal_rule
 
-Provide it with the desired exponent _y_, and have fun!
-
-You can also provide some non-default inferior and superior bounds (_a_ and _b_, respectivelly), and precision (i.e. the estimated result should not be further to the actual result than this value). You can also run this program with several processes (see below).
+You can provide some non-default inferior and superior bounds (_a_ and _b_, respectivelly), and "precision" (currently, the width of the trapezoid slices).
 
 ## Usage
 
 ```text
 usage: main.py [-h] [-a LOWER] [-b UPPER] [-p PRECISION] [-f FORK] expression
 
-Calculates the definite integral of a power function.
+Estimates the definite integral of a single-variable function.
 
 positional arguments:
-  exponent              Power function's exponent.
+  expression            Single-variable expression.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -37,7 +24,7 @@ optional arguments:
   -b UPPER, --upper UPPER
                         Upper integration bound (defualt: 1.0).
   -p PRECISION, --precision PRECISION
-                        Calculation precision (default: 1e-4).
+                        Estimation precision (default: 1e-4).
   -f FORK, --fork FORK  Number of worker processes.
 ```
 

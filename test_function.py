@@ -94,6 +94,28 @@ class TestFunction(unittest.TestCase):
         self.assertAlmostEquals(-3, f({'x': 3}))
         self.assertAlmostEquals(-4, f({'x': 4}))
 
+    def test_vars(self):
+        f = parse('1')
+        self.assertSequenceEqual((), f.names())
+
+        f = parse('x')
+        self.assertSequenceEqual(('x',), f.names())
+
+        f = parse('x+1')
+        self.assertSequenceEqual(('x',), f.names())
+
+        f = parse('1+x')
+        self.assertSequenceEqual(('x',), f.names())
+
+        f = parse('x+y')
+        self.assertSequenceEqual(('x', 'y'), f.names())
+
+        f = parse('-x')
+        self.assertSequenceEqual(('x',), f.names())
+
+        f = parse('-x^(2*y)+PI')
+        self.assertSequenceEqual(('x', 'y', 'PI'), f.names())
+
 
 if __name__ == '__main__':
     unittest.main()

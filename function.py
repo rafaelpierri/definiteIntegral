@@ -15,6 +15,10 @@ class Constant(object):
         except AttributeError:
             return False
 
+    def names(self):
+        return tuple()
+
+
 class Variable(object):
 
     def __init__(self, name):
@@ -31,6 +35,9 @@ class Variable(object):
             return self.name == other.name
         except AttributeError:
             return False
+
+    def names(self):
+        return self.name,
 
 
 class BinaryOperator(object):
@@ -50,6 +57,10 @@ class BinaryOperator(object):
         except AttributeError:
             return False
 
+    def names(self):
+        return self.left.names() + self.right.names()
+
+
 class UnaryOperator(object):
 
     def __init__(self, operand, pre='', post=''):
@@ -66,6 +77,9 @@ class UnaryOperator(object):
                     and self.operand == other.operand)
         except AttributeError:
             return False
+
+    def names(self):
+        return self.operand.names()
 
 
 class OpAdd(BinaryOperator):
