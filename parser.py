@@ -1,4 +1,5 @@
 from lexer import Lexer
+from function import Variable, build
 
 class ParserException(Exception):
 
@@ -12,21 +13,6 @@ class ParserException(Exception):
         else:
             return '{} ("{}" at position {})'.format(self.message, 
                     self.token[1], self.token[2])
-
-
-class Variable(object):
-
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return self.name
-
-    def __call__(self, context):
-        return context[self.name]
-
-    def __eq__(self, other):
-        return self.name == other.name
 
 
 class Parser(object):
@@ -103,10 +89,7 @@ class Parser(object):
             raise ParserException('Unexpected token', t)
 
         if t[0] == 'number':
-            value = float(t[1])
-            if value.is_integer():
-                value = int(value)
-            self.expr.append(value)
+            self.expr.append(float(t[1]))
             return self.lexer.next()
         elif t[0] == 'name':
             self.expr.append(Variable(t[1]))
@@ -120,5 +103,5 @@ class Parser(object):
 
 
 def parse(src):
-    return Parser().parse(src)
+    return build(Parser().parse(src))
 
